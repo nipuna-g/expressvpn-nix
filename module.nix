@@ -64,6 +64,11 @@ in {
       description = "ExpressVPN daemon";
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
+      # ExecStart is a fixed /opt path, so the unit text doesn't change when the
+      # package version bumps -- nixos-rebuild would leave the daemon stopped
+      # while the activation script swaps the binaries underneath it. Tie the
+      # unit to the store path so a version bump actually restarts the daemon.
+      restartTriggers = [ "${expressvpn}" ];
       # The daemon shells out to these tools by name (resolved via PATH) to set
       # up routing, the kill switch and to load the wireguard module.
       path = with pkgs; [ iptables iproute2 kmod procps gawk ];
