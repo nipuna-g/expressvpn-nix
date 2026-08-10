@@ -1,0 +1,42 @@
+name: update
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Check for a new version
+        id: update
+        run: ./update.sh
+
+      - name: Verify it builds
+        if: steps.update.outputs.changed == 'true'
+        run: nix build .#expressvpn-qt --print-build-logs
+
+      - name: Open pull request
+        if: steps.update.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "expressvpn: update to ${{ steps.update.outputs.version }}"
+          title: "expressvpn: update to ${{ steps.update.outputs.version }}"
+          body: |
+            Automated update to ExpressVPN **${{ steps.update.outputs.version }}**.
+
+            Version and sha256 come from ExpressVPN's installers API
+            (`/v2/installers`, `linux_qt`). Verified with `nix build .#expressvpn-qt`.
+          branch: update/expressvpn
+          delete-branch: true

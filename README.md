@@ -34,13 +34,23 @@ Or launch the **ExpressVPN** GUI from your application menu.
 
 ## Updating
 
-Bump `version` and `hash` in [`package.nix`](package.nix):
+A weekly GitHub Actions workflow (`.github/workflows/update.yml`) checks
+ExpressVPN's installers API for a newer Linux build and opens a PR bumping
+`version` and `hash` in [`package.nix`](package.nix) once it verifies the new
+version builds.
+
+To update by hand, run the same script the workflow uses:
 
 ```sh
-nix-prefetch-url https://www.expressvpn.works/clients/linux/expressvpn-linux-universal-<version>_release.run
+./update.sh   # needs curl, jq, and nix on PATH
 ```
 
 Current version: **14.2.0.13656**.
+
+## CI
+
+`.github/workflows/build.yml` builds `expressvpn-qt` and runs `nix flake check`
+on every push and pull request.
 
 ## License
 
