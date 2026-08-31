@@ -31,6 +31,7 @@ jobs:
         if: steps.update.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "expressvpn: update to ${{ steps.update.outputs.version }}"
           title: "expressvpn: update to ${{ steps.update.outputs.version }}"
           body: |
