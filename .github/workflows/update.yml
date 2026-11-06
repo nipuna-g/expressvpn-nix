@@ -27,17 +27,10 @@ jobs:
         if: steps.update.outputs.changed == 'true'
         run: nix build .#expressvpn-qt --print-build-logs
 
-      - name: Open pull request
+      - name: Commit and push to main
         if: steps.update.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "expressvpn: update to ${{ steps.update.outputs.version }}"
-          title: "expressvpn: update to ${{ steps.update.outputs.version }}"
-          body: |
-            Automated update to ExpressVPN **${{ steps.update.outputs.version }}**.
-
-            Version and sha256 come from ExpressVPN's installers API
-            (`/v2/installers`, `linux_qt`). Verified with `nix build .#expressvpn-qt`.
-          branch: update/expressvpn
-          delete-branch: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "expressvpn: update to ${{ steps.update.outputs.version }}"
+          git push origin HEAD:main
