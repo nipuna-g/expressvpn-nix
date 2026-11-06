@@ -6,11 +6,11 @@
 
 stdenv.mkDerivation rec {
   pname = "expressvpn";
-  version = "14.2.1.13658";
+  version = "14.3.1.15429";
 
   src = fetchurl {
     url = "https://www.expressvpn.works/clients/linux/expressvpn-linux-universal-${version}_release.run";
-    hash = "sha256-o9y+sIwcZO7bkhsYwNkdZM3oS5eEQ336dMdmLzDsTDk=";
+    hash = "sha256-94SvZihWT0/LCoIGTU3B8iUgw8kXuxyIK9YetiGzHvs=";
   };
 
   nativeBuildInputs = [ autoPatchelfHook ];
